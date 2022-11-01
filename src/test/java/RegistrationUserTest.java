@@ -17,7 +17,10 @@ public class RegistrationUserTest {
 
     @After
     public void tearDown() {
-        System.out.println("Конец теста");
+        if (user != null) {
+            userClient.deleteUser(user);
+            System.out.println("Конец теста");
+        }
     }
 
     @Test
@@ -28,9 +31,6 @@ public class RegistrationUserTest {
         response.then().assertThat().statusCode(200)
                 .and()
                 .body("success", Matchers.equalTo(true));
-        String bearerAccessToken = response.jsonPath().getString("accessToken");
-        String accessToken = bearerAccessToken.substring(7);
-        userClient.deleteAccessToken(accessToken);
     }
 
     @Test
@@ -42,9 +42,6 @@ public class RegistrationUserTest {
         responseSecond.then().assertThat().statusCode(403)
                 .and()
                 .body("message", Matchers.equalTo("User already exists"));
-        String bearerAccessToken = responseFirst.jsonPath().getString("accessToken");
-        String accessToken = bearerAccessToken.substring(7);
-        userClient.deleteAccessToken(accessToken);
     }
 
     @Test
@@ -56,21 +53,22 @@ public class RegistrationUserTest {
                 .body("success", Matchers.equalTo(false));
     }
 
-    @Test
-    @DisplayName("Создание пользователя без email")
-    public void registerUserWithoutLoginTest() {
-        Response response = userClient.createUserWithoutEmail();
-        response.then().assertThat().statusCode(403)
-                .and()
-                .body("message", Matchers.equalTo("Email, password and name are required fields"));
-    }
+        @Test
+        @DisplayName("Создание пользователя без email")
+        public void registerUserWithoutLoginTest () {
+            Response response = userClient.createUserWithoutEmail();
+            response.then().assertThat().statusCode(403)
+                    .and()
+                    .body("message", Matchers.equalTo("Email, password and name are required fields"));
+        }
 
-    @Test
-    @DisplayName("Создание пользователя без пароля")
-    public void registerUserWithoutPasswordTest() {
-        Response response = userClient.createUserWithoutPassword();
-        response.then().assertThat().statusCode(403)
-                .and()
-                .body("message", Matchers.equalTo("Email, password and name are required fields"));
+        @Test
+        @DisplayName("Создание пользователя без пароля")
+        public void registerUserWithoutPasswordTest () {
+            Response response = userClient.createUserWithoutPassword();
+            response.then().assertThat().statusCode(403)
+                    .and()
+                    .body("message", Matchers.equalTo("Email, password and name are required fields"));
+        }
+
     }
-}

@@ -1,8 +1,9 @@
 import io.qameta.allure.Step;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.json.JSONObject;
+
+import static io.restassured.RestAssured.given;
 
 public class UserClient extends RestAssuredClient {
 
@@ -10,7 +11,7 @@ public class UserClient extends RestAssuredClient {
 
     @Step("Создание пользователя")
     public Response create(User user) {
-        Response response = RestAssured.given()
+        Response response = given()
                 .spec(getBaseSpec())
                 .body(user)
                 .when()
@@ -26,13 +27,12 @@ public class UserClient extends RestAssuredClient {
         JSONObject loginReqObj = new JSONObject();
         loginReqObj.put("email", email);
         loginReqObj.put("password", password);
-        Response response = RestAssured.given()
+        Response response = given()
                 .spec(getBaseSpec())
                 .body(loginReqObj.toString())
                 .when()
                 .post(USER_PATH + "/register");
         printResponseBodyToConsole(response, "запрос регистрации");
-
         return response;
     }
 
@@ -43,7 +43,7 @@ public class UserClient extends RestAssuredClient {
         JSONObject loginReqObj = new JSONObject();
         loginReqObj.put("password", password);
         loginReqObj.put("name", name);
-        Response response = RestAssured.given()
+        Response response = given()
                 .spec(getBaseSpec())
                 .body(loginReqObj.toString())
                 .when()
@@ -59,7 +59,7 @@ public class UserClient extends RestAssuredClient {
         JSONObject loginReqObj = new JSONObject();
         loginReqObj.put("email", email);
         loginReqObj.put("name", name);
-        Response response = RestAssured.given()
+        Response response = given()
                 .spec(getBaseSpec())
                 .body(loginReqObj.toString())
                 .when()
@@ -70,7 +70,7 @@ public class UserClient extends RestAssuredClient {
 
     @Step("Авторизация под пользователем")
     public Response login(LoginRequestBody loginRequestBody) {
-        Response response = RestAssured.given()
+        Response response = given()
                 .spec(getBaseSpec())
                 .body(loginRequestBody)
                 .when()
@@ -88,7 +88,7 @@ public class UserClient extends RestAssuredClient {
         JSONObject loginReqObj = new JSONObject();
         loginReqObj.put("email", email);
         loginReqObj.put("password", userPassword);
-        Response response = RestAssured.given()
+        Response response = given()
                 .spec(getBaseSpec())
                 .body(loginReqObj.toString())
                 .when()
@@ -100,13 +100,13 @@ public class UserClient extends RestAssuredClient {
     @Step("Авторизация под пользователем с неверным паролем")
     public Response loginWithWrongPassword(User user) {
 
-        String userPassword = RandomStringUtils.randomAlphabetic(10);
+        String userPassword = "abc";
         LoginRequestBody userBody = LoginRequestBody.from(user);
-        String email = userBody.email;
+        String email = userBody.getEmail();
         JSONObject loginReqObj = new JSONObject();
         loginReqObj.put("email", email);
         loginReqObj.put("password", userPassword);
-        Response response = RestAssured.given()
+        Response response = given()
                 .spec(getBaseSpec())
                 .body(loginReqObj.toString())
                 .when()
@@ -116,12 +116,12 @@ public class UserClient extends RestAssuredClient {
     }
 
     @Step("Удаление пользователя")
-    public Response deleteS(User user) {
+    public Response deleteUser(User user) {
 
         Response responseLogin = login(LoginRequestBody.from(user));
         String bearerAccessToken = responseLogin.jsonPath().getString("accessToken");
         String accessToken = bearerAccessToken.substring(7);
-        Response response = RestAssured.given()
+        Response response = given()
                 .spec(getBaseSpec())
                 .auth().oauth2(accessToken)
                 .when()
@@ -134,7 +134,7 @@ public class UserClient extends RestAssuredClient {
     public Response logOut(String refreshToken) {
         JSONObject loginReqObj = new JSONObject();
         loginReqObj.put("token", refreshToken);
-        Response response = RestAssured.given()
+        Response response = given()
                 .spec(getBaseSpec())
                 .body(loginReqObj.toString())
                 .when()
@@ -145,7 +145,7 @@ public class UserClient extends RestAssuredClient {
 
     @Step("Удаление пользователя")
     public Response deleteAccessToken(String accessToken) {
-        Response response = RestAssured.given()
+        Response response = given()
                 .spec(getBaseSpec())
                 .auth().oauth2(accessToken)
                 .when()
@@ -160,7 +160,7 @@ public class UserClient extends RestAssuredClient {
         System.out.println("новый email ===" + userEmailSecond);
         JSONObject loginReqObj = new JSONObject();
         loginReqObj.put("email", userEmailSecond);
-        Response response = RestAssured.given()
+        Response response = given()
                 .spec(getBaseSpec())
                 .body(loginReqObj.toString())
                 .when()
@@ -175,7 +175,7 @@ public class UserClient extends RestAssuredClient {
         System.out.println("новый password === " + userPasswordSecond);
         JSONObject loginReqObj = new JSONObject();
         loginReqObj.put("password", userPasswordSecond);
-        Response response = RestAssured.given()
+        Response response = given()
                 .spec(getBaseSpec())
                 .body(loginReqObj.toString())
                 .when()
@@ -190,7 +190,7 @@ public class UserClient extends RestAssuredClient {
         System.out.println("новый name === " + userNameSecond);
         JSONObject loginReqObj = new JSONObject();
         loginReqObj.put("name", userNameSecond);
-        Response response = RestAssured.given()
+        Response response = given()
                 .spec(getBaseSpec())
                 .body(loginReqObj.toString())
                 .when()
@@ -205,7 +205,7 @@ public class UserClient extends RestAssuredClient {
         System.out.println("новый email ===" + userEmailSecond);
         JSONObject loginReqObj = new JSONObject();
         loginReqObj.put("email", userEmailSecond);
-        Response response = RestAssured.given()
+        Response response = given()
                 .spec(getBaseSpec())
                 .auth().oauth2(accessToken)
                 .and()
@@ -218,11 +218,11 @@ public class UserClient extends RestAssuredClient {
 
     @Step("Изменение пароля пользователя с авторизацией")
     public Response changeUsersInfoPassword(String accessToken) {
-        String userPasswordSecond = RandomStringUtils.randomAlphabetic(10);
+        String userPasswordSecond = "test123";
         System.out.println("новый password === " + userPasswordSecond);
         JSONObject loginReqObj = new JSONObject();
         loginReqObj.put("password", userPasswordSecond);
-        Response response = RestAssured.given()
+        Response response = given()
                 .spec(getBaseSpec())
                 .auth().oauth2(accessToken)
                 .and()
@@ -239,7 +239,7 @@ public class UserClient extends RestAssuredClient {
         System.out.println("новый name === " + userNameSecond);
         JSONObject loginReqObj = new JSONObject();
         loginReqObj.put("name", userNameSecond);
-        Response response = RestAssured.given()
+        Response response = given()
                 .spec(getBaseSpec())
                 .auth().oauth2(accessToken)
                 .and()

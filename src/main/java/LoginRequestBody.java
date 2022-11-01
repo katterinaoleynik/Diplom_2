@@ -1,7 +1,11 @@
-public class LoginRequestBody {
+import lombok.Getter;
+import lombok.Setter;
 
-    public final String email;
-    public final String password;
+public class LoginRequestBody {
+    @Getter
+    @Setter
+    String email;
+    String password;
 
     public LoginRequestBody(String email, String password) {
         this.email = email;
@@ -9,7 +13,7 @@ public class LoginRequestBody {
     }
 
     public static LoginRequestBody from(User user) {
-        return new LoginRequestBody(user.email, user.password);
+        return new LoginRequestBody(user.getEmail(), user.password);
     }
 
     @Override

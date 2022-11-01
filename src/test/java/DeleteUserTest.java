@@ -28,7 +28,7 @@ public class DeleteUserTest {
     @Test
     @DisplayName("Удаление пользователя с валидными параметрами c авторизацией")
     public void deleteUserWhenCorrectParametersTest() {
-        Response responseDelete = userClient.deleteS(user);
+        Response responseDelete = userClient.deleteUser(user);
         responseDelete.then().assertThat().statusCode(202)
                 .and()
                 .body("success", Matchers.equalTo(true));
