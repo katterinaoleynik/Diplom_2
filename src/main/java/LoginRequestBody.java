@@ -13,7 +13,7 @@ public class LoginRequestBody {
     }
 
     public static LoginRequestBody from(User user) {
-        return new LoginRequestBody(user.getEmail(), user.password);
+        return new LoginRequestBody(user.getEmail(), user.getPassword());
     }
 
     @Override

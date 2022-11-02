@@ -7,8 +7,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 class User {
 
     private String email;
-    String password;
-    String name;
+    private String password;
+    private String name;
 
     public User(String email, String password, String name) {
         this.email = email;
