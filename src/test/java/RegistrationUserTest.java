@@ -9,6 +9,7 @@ public class RegistrationUserTest {
 
     private UserClient userClient;
     private User user;
+    String accessToken;
 
     @Before
     public void setUp() {
@@ -51,24 +52,34 @@ public class RegistrationUserTest {
         response.then().assertThat().statusCode(403)
                 .and()
                 .body("success", Matchers.equalTo(false));
+        if (response.statusCode() == 200) {
+            userClient.deleteAccessToken(accessToken);
+        }
     }
 
-        @Test
-        @DisplayName("Создание пользователя без email")
-        public void registerUserWithoutLoginTest () {
-            Response response = userClient.createUserWithoutEmail();
-            response.then().assertThat().statusCode(403)
-                    .and()
-                    .body("message", Matchers.equalTo("Email, password and name are required fields"));
-        }
-
-        @Test
-        @DisplayName("Создание пользователя без пароля")
-        public void registerUserWithoutPasswordTest () {
-            Response response = userClient.createUserWithoutPassword();
-            response.then().assertThat().statusCode(403)
-                    .and()
-                    .body("message", Matchers.equalTo("Email, password and name are required fields"));
+    @Test
+    @DisplayName("Создание пользователя без email")
+    public void registerUserWithoutLoginTest() {
+        Response response = userClient.createUserWithoutEmail();
+        response.then().assertThat().statusCode(403)
+                .and()
+                .body("message", Matchers.equalTo("Email, password and name are required fields"));
+        if (response.statusCode() == 200) {
+            userClient.deleteAccessToken(accessToken);
         }
 
     }
+
+    @Test
+    @DisplayName("Создание пользователя без пароля")
+    public void registerUserWithoutPasswordTest() {
+        Response response = userClient.createUserWithoutPassword();
+        response.then().assertThat().statusCode(403)
+                .and()
+                .body("message", Matchers.equalTo("Email, password and name are required fields"));
+        if (response.statusCode() == 200) {
+            userClient.deleteAccessToken(accessToken);
+        }
+    }
+
+}

@@ -2,10 +2,11 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.RandomStringUtils;
 
+@Getter
+@Setter
 class User {
-    @Getter
-    @Setter
-    String email;
+
+    private String email;
     String password;
     String name;
 
